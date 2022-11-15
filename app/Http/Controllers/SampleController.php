@@ -31,7 +31,8 @@ class SampleController extends Controller
         User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
-            'password' => Hash::make($data['password'])
+            'password' => Hash::make($data['password']),
+            'token'    => md5(uniqid())
         ]);
 
         return redirect('login')->with('success', 'Registration Completed, now you can login');
@@ -73,48 +74,5 @@ class SampleController extends Controller
         auth()->logout();
 
         return Redirect('login');
-    }
-
-    public function profile()
-    {
-        if(auth()->check())
-        {
-            $data = User::where('id', auth()->id())->get();
-
-            return view('profile', compact('data'));
-        }
-
-        return redirect("login")->with('success', 'you are not allowed to access');
-    }
-
-    public function profile_validation(Request $request)
-    {
-        $request->validate([
-            'name'       => 'required',
-            'email'      => 'required|email',
-            'user_image' => 'image|mimes:jpg,png,jpeg|max:2048|dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000'
-        ]);
-
-        $user_image = $request->hidden_user_image;
-
-        if($request->user_image != '')
-        {
-            $user_image = time() . '.' . $request->user_image->getClientOriginalExtension();
-            $request->user_image->move(public_path('images'), $user_image);
-        }
-
-        $user = User::find(auth()->id());
-        $user->name = $request->name;
-        $user->email = $request->email;
-
-        if($request->password != '')
-        {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->user_image = $user_image;
-        $user->save();
-
-        return redirect('profile')->with('success', 'Profile Details Updated');
     }
 }
