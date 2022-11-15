@@ -28,7 +28,8 @@
                                 @endif
                             </div>
                             <div class="form-group mb-3">
-                                <input type="password" name="password" class="form-control" />
+                                <input type="password" name="password" class="form-control"
+                                    placeholder="enter your password" />
                             </div>
                             <div class="form-group mb-3">
                                 <input type="file" name="user_image" />

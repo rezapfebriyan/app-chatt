@@ -93,7 +93,7 @@ class SampleController extends Controller
         $request->validate([
             'name'       => 'required',
             'email'      => 'required|email',
-            'user_image' => 'image|mimes:jpg,png,jpeg|max:2048|dimensions:min_width=100,min_height=100,max_width=1000,max_height=1000'
+            'user_image' => 'image|mimes:jpg,png,jpeg|max:2048'
         ]);
 
         $user_image = $request->hidden_user_image;
@@ -116,6 +116,6 @@ class SampleController extends Controller
         $user->user_image = $user_image;
         $user->save();
 
-        return redirect('profile')->with('success', 'Profile Details Updated');
+        return redirect('profile')->with('success', 'Profile has been updated');
     }
 }
