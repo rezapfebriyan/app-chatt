@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateUsersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -15,9 +15,9 @@ class UpdateUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('token');
-            $table->integer('connection_id');
+            $table->integer('connection_id')->nullable();
             $table->enum('user_status', ['Offline', 'Online']);
-            $table->string('user_image');
+            $table->string('user_image')->nullable();
         });
     }
 
@@ -35,4 +35,4 @@ class UpdateUsersTable extends Migration
             $table->dropColumn('user_image');
         });
     }
-}
+};
