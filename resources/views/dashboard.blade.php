@@ -78,30 +78,22 @@
 
 <script>
     var conn = new WebSocket('ws://127.0.0.1:8090/?token={{ auth()->user()->token }}');
-
     var from_user_id = "{{ Auth::user()->id }}";
-
     var to_user_id = "";
 
     conn.onopen = function(e) {
-
         console.log("Connection established!");
 
         load_unconnected_user(from_user_id);
-
         load_unread_notification(from_user_id);
-
         load_connected_chat_user(from_user_id);
-
     };
 
     conn.onmessage = function(e) {
-
         var data = JSON.parse(e.data);
 
         if (data.image_link) {
             //Display Code for uploaded Image
-
             document.getElementById('message_area').innerHTML =
                 `<img src="{{ asset('images/`+data.image_link+`') }}" class="img-thumbnail img-fluid" />`;
         }
@@ -113,13 +105,11 @@
                 if (online_status_icon[count].id == 'status_' + data.id) {
                     if (data.status == 'Online') {
                         online_status_icon[count].classList.add('text-success');
-
                         online_status_icon[count].classList.remove('text-danger');
 
                         document.getElementById('last_seen_' + data.id + '').innerHTML = 'Online';
                     } else {
                         online_status_icon[count].classList.add('text-danger');
-
                         online_status_icon[count].classList.remove('text-success');
 
                         document.getElementById('last_seen_' + data.id + '').innerHTML = data.last_seen;
@@ -233,7 +223,6 @@
 
         if (data.response_process_chat_request) {
             load_unread_notification(data.user_id);
-
             load_connected_chat_user(data.user_id);
         }
 
@@ -274,7 +263,6 @@
                     }
 
 
-
                     html += `
 						&nbsp; ` + user_image + `&nbsp;<b>` + data.data[count].name + `</b>
 						<div class="text-right"><small class="text-muted last_seen" id="last_seen_` + data.data[count].id + `">` +
@@ -290,7 +278,6 @@
             }
 
             html += '</div>';
-
             document.getElementById('user_list').innerHTML = html;
 
             check_unread_message();
@@ -619,11 +606,8 @@
 
     function upload_image() {
         var file_element = document.getElementById('browse_image').files[0];
-
         var file_name = file_element.name;
-
         var file_extension = file_name.split('.').pop().toLowerCase();
-
         var allowed_extension = ['png', 'jpg'];
 
         if (allowed_extension.indexOf(file_extension) == -1) {
@@ -633,7 +617,6 @@
         }
 
         var file_reader = new FileReader();
-
         var file_raw_data = new ArrayBuffer();
 
         file_reader.loadend = function() {
@@ -643,7 +626,6 @@
         file_reader.onload = function(event) {
 
             file_raw_data = event.target.result;
-
             conn.send(file_raw_data);
         }
 
