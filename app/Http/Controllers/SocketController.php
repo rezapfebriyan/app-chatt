@@ -46,6 +46,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
     }
 
+    //* akan dipanggil ketika send message
     public function onMessage(ConnectionInterface $conn, $msg)
     {
         if(preg_match('~[^\x20-\x7E\t\r\n]~', $msg) > 0)
@@ -74,16 +75,16 @@ class SocketController extends Controller implements MessageComponentInterface
                                     ->orderBy('name', 'ASC')
                                     ->get();
 
-                $sub_data = array();
+                $sub_data = [];
 
                 foreach($user_data as $row)
                 {
-                    $sub_data[] = array(
+                    $sub_data[] = [
                         'name'      => $row['name'],
                         'id'        => $row['id'],
                         'status'    => $row['user_status'],
                         'user_image'=> $row['user_image']
-                    );
+                    ];
                 }
 
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
@@ -107,7 +108,7 @@ class SocketController extends Controller implements MessageComponentInterface
                                     ->orderBy('name', 'ASC')
                                     ->get();
 
-                $sub_data = array();
+                $sub_data = [];
 
                 foreach($user_data as $row)
                 {
@@ -131,12 +132,12 @@ class SocketController extends Controller implements MessageComponentInterface
 
                     if($chat_request->count() == 0)
                     {
-                        $sub_data[] = array(
+                        $sub_data[] = [
                             'name'      => $row['name'],
                             'id'        => $row['id'],
                             'status'    => $row['user_status'],
                             'user_image'=> $row['user_image']
-                        );
+                        ];
                     }
                 }
 
@@ -198,7 +199,7 @@ class SocketController extends Controller implements MessageComponentInterface
                 AND (from_user_id = $data->user_id OR to_user_id = $data->user_id)
                 ORDER BY id ASC
                 */
-                $sub_data = array();
+                $sub_data = [];
 
                 foreach($notification_data as $row)
                 {
@@ -217,7 +218,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
                     $user_data = User::select('name', 'user_image')->where('id', $user_id)->first();
 
-                    $sub_data[] = array(
+                    $sub_data[] = [
                         'id'               => $row->id,
                         'from_user_id'     => $row->from_user_id,
                         'to_user_id'       => $row->to_user_id,
@@ -225,7 +226,7 @@ class SocketController extends Controller implements MessageComponentInterface
                         'notification_type'=> $notification_type,
                         'status'           => $row->status,
                         'user_image'       => $user_data->user_image
-                    );
+                    ];
                 }
 
                 $sender_connection_id = User::select('connection_id')->where('id', $data->user_id)->get();
@@ -280,7 +281,7 @@ class SocketController extends Controller implements MessageComponentInterface
                 WHERE (from_user_id = $data->from_user_id OR to_user_id = $data->from_user_id) 
                 AND status = 'Approve'
                 */
-                $sub_data = array();
+                $sub_data = [];
 
                 foreach($user_id_data as $user_id_row)
                 {
@@ -306,13 +307,13 @@ class SocketController extends Controller implements MessageComponentInterface
                         $last_seen = 'Last Seen At ' . date('d/m/Y H:i', strtotime($user_data->updated_at));
                     }
 
-                    $sub_data[] = array(
+                    $sub_data[] = [
                         'id'         => $user_data->id,
                         'name'       => $user_data->name,
                         'user_image' => $user_data->user_image,
                         'user_status'=> $user_data->user_status,
                         'last_seen'  => $last_seen
-                    );
+                    ];
                 }
 
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
