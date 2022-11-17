@@ -50,7 +50,9 @@ class SampleController extends Controller
         if(auth()->attempt($credentials))
         {
             $token = md5(uniqid());
-            User::where('id', auth()->id())->update([ 'token' => $token ]);
+            User::where('id', auth()->id())->update([
+                'token' => $token
+            ]);
 
             return redirect('dashboard')->with('success', 'Login success');
         }
@@ -93,7 +95,7 @@ class SampleController extends Controller
         $request->validate([
             'name'       => 'required',
             'email'      => 'required|email',
-            'user_image' => 'image|mimes:jpg,png,jpeg|max:2048'
+            'user_image' => 'image|mimes:jpg, png, jpeg|max:2048'
         ]);
 
         $user_image = $request->hidden_user_image;
