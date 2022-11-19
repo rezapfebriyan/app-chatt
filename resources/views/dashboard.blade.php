@@ -344,7 +344,6 @@
 
             if (html != '') {
                 var previous_chat_element = document.querySelector('#chat_history');
-
                 var chat_history_element = document.querySelector('#chat_history');
 
                 chat_history_element.innerHTML = previous_chat_element.innerHTML + html;
@@ -539,9 +538,7 @@
 
     function close_chat() {
         document.getElementById('chat_header').innerHTML = 'Chat Area';
-
         document.getElementById('close_chat_area').innerHTML = '';
-
         document.getElementById('chat_area').innerHTML = '';
 
         to_user_id = '';
@@ -562,7 +559,6 @@
         conn.send(JSON.stringify(data));
 
         document.querySelector('#message_area').innerHTML = '';
-
         document.querySelector('#send_button').disabled = false;
     }
 
