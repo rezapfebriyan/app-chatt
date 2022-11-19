@@ -122,7 +122,8 @@ class SocketController extends Controller implements MessageComponentInterface
                                         $query
                                             ->where('from_user_id', $row->id)
                                             ->where('to_user_id', $data->from_user_id);
-                                    })->get();
+                                    })
+                                    ->get();
 
                     /*
                     SELECT id FROM chat_request 
@@ -185,13 +186,13 @@ class SocketController extends Controller implements MessageComponentInterface
             if($data->type == 'request_load_unread_notification')
             {
                 $notification_data = Chat_request::select('id', 'from_user_id', 'to_user_id', 'status')
-                                        ->where('status', '!=', 'Approve')
-                                        ->where(function($query) use ($data) {
-                                            $query
-                                            ->where('from_user_id', $data->user_id)
-                                            ->orWhere('to_user_id', $data->user_id);
-                                        })->orderBy('id', 'ASC')
-                                        ->get();
+                                                    ->where('status', '!=', 'Approve')
+                                                    ->where(function($query) use ($data) {
+                                                        $query
+                                                            ->where('from_user_id', $data->user_id)
+                                                            ->orWhere('to_user_id', $data->user_id);
+                                                    })->orderBy('id', 'ASC')
+                                                    ->get();
 
                 /*
                 SELECT id, from_user_id, to_user_id, status FROM chat_requests
@@ -272,9 +273,9 @@ class SocketController extends Controller implements MessageComponentInterface
             {
                 $condition_1 = ['from_user_id' => $data->from_user_id, 'to_user_id' => $data->from_user_id];
                 $user_id_data = Chat_request::select('from_user_id', 'to_user_id')
-                                            ->orWhere($condition_1)
-                                            ->where('status', 'Approve')
-                                            ->get();
+                                                ->orWhere($condition_1)
+                                                ->where('status', 'Approve')
+                                                ->get();
 
                 /*
                 SELECT from_user id, to_user_id FROM chat_requests 
@@ -296,7 +297,9 @@ class SocketController extends Controller implements MessageComponentInterface
                         $user_id = $user_id_row->to_user_id;
                     }
 
-                    $user_data = User::select('id', 'name', 'user_image', 'user_status', 'updated_at')->where('id', $user_id)->first();
+                    $user_data = User::select('id', 'name', 'user_image', 'user_status', 'updated_at')
+                                        ->where('id', $user_id)
+                                        ->first();
 
                     if(date('Y-m-d') == date('Y-m-d', strtotime($user_data->updated_at)))
                     {
@@ -374,14 +377,15 @@ class SocketController extends Controller implements MessageComponentInterface
                 $chat_data = Chat::select('id', 'from_user_id', 'to_user_id', 'chat_message', 'message_status')
                                     ->where(function($query) use ($data) {
                                         $query
-                                        ->where('from_user_id', $data->from_user_id)
-                                        ->where('to_user_id', $data->to_user_id);
+                                            ->where('from_user_id', $data->from_user_id)
+                                            ->where('to_user_id', $data->to_user_id);
                                     })
                                     ->orWhere(function($query) use ($data) {
                                         $query
-                                        ->where('from_user_id', $data->to_user_id)
-                                        ->where('to_user_id', $data->from_user_id);
-                                    })->orderBy('id', 'ASC')
+                                            ->where('from_user_id', $data->to_user_id)
+                                            ->where('to_user_id', $data->from_user_id);
+                                    })
+                                    ->orderBy('id', 'ASC')
                                     ->get();
                 /*
                 SELECT id, from_user_id, to_user_id, chat_message, message status 
@@ -424,9 +428,9 @@ class SocketController extends Controller implements MessageComponentInterface
             if($data->type == 'check_unread_message')
             {
                 $chat_data = Chat::select('id', 'from_user_id', 'to_user_id')
-                        ->where('message_status', '!=', 'Read')
-                        ->where('from_user_id', $data->to_user_id)
-                        ->get();
+                                    ->where('message_status', '!=', 'Read')
+                                    ->where('from_user_id', $data->to_user_id)
+                                    ->get();
 
                 /*
                 SELECT id, from_user_id, to_user_id FROM chats 
