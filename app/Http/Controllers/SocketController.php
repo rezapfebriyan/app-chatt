@@ -115,13 +115,13 @@ class SocketController extends Controller implements MessageComponentInterface
                     $chat_request = Chat_request::select('id')
                                     ->where(function($query) use ($data, $row) {
                                         $query
-                                        ->where('from_user_id', $data->from_user_id)
-                                        ->where('to_user_id', $row->id);
+                                            ->where('from_user_id', $data->from_user_id)
+                                            ->where('to_user_id', $row->id);
                                     })
                                     ->orWhere(function($query) use ($data, $row) {
                                         $query
-                                        ->where('from_user_id', $row->id)
-                                        ->where('to_user_id', $data->from_user_id);
+                                            ->where('from_user_id', $row->id)
+                                            ->where('to_user_id', $data->from_user_id);
                                     })->get();
 
                     /*
