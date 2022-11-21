@@ -46,7 +46,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
     }
 
-    //* akan dipanggil ketika send message
+    //* akan dipanggil ketika message dikirim, jadi nerima data dari client
     public function onMessage(ConnectionInterface $conn, $msg)
     {
         if(preg_match('~[^\x20-\x7E\t\r\n]~', $msg) > 0)
@@ -113,17 +113,17 @@ class SocketController extends Controller implements MessageComponentInterface
                 foreach($user_data as $row)
                 {
                     $chat_request = Chat_request::select('id')
-                                    ->where(function($query) use ($data, $row) {
-                                        $query
-                                            ->where('from_user_id', $data->from_user_id)
-                                            ->where('to_user_id', $row->id);
-                                    })
-                                    ->orWhere(function($query) use ($data, $row) {
-                                        $query
-                                            ->where('from_user_id', $row->id)
-                                            ->where('to_user_id', $data->from_user_id);
-                                    })
-                                    ->get();
+                                                    ->where(function($query) use ($data, $row) {
+                                                        $query
+                                                            ->where('from_user_id', $data->from_user_id)
+                                                            ->where('to_user_id', $row->id);
+                                                    })
+                                                    ->orWhere(function($query) use ($data, $row) {
+                                                        $query
+                                                            ->where('from_user_id', $row->id)
+                                                            ->where('to_user_id', $data->from_user_id);
+                                                    })
+                                                    ->get();
 
                     /*
                     SELECT id FROM chat_request 
