@@ -146,7 +146,8 @@
 						</div>
 					</div>
 				</li>
-				`;
+				`; // ketika button diklik, maka akan call method send request dan set type == request_chat_user
+                    // jadi data from_user_id dan to_user_id akan masuk ke tabel
                 }
 
                 html += '</ul>';
