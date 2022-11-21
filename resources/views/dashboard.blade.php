@@ -527,9 +527,7 @@
 	`;
 
         document.getElementById('chat_area').innerHTML = html;
-
         document.getElementById('chat_header').innerHTML = 'Chat with <b>' + to_user_name + '</b>';
-
         document.getElementById('close_chat_area').innerHTML =
             '<button type="button" id="close_chat" class="btn btn-danger btn-sm float-end" onclick="close_chat();"><i class="fas fa-times"></i></button>';
 
