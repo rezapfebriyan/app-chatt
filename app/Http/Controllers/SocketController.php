@@ -131,8 +131,11 @@ class SocketController extends Controller implements MessageComponentInterface
                     OR (from_user_id = $row->id AND to_user_id = $data->from_user_id)
                     */
 
+                    // cek apakah id user()->auth dan id user respon chat request ada di tabel chat_request
                     if($chat_request->count() == 0)
                     {
+                        // tampilkan list data user yg tidak ada di tabel chat_request
+                        // karena user yg dipilih untuk request chat akan hilang dari list
                         $sub_data[] = [
                             'name'      => $row['name'],
                             'id'        => $row['id'],
@@ -168,8 +171,10 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($this->clients as $client)
                 {
+                    //* cek apakah koneksi sesuai dengan koneksi auth()->user
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
+                        //* kirim respon ke auth()->user dan set key tsb jadi true
                         $send_data['response_from_user_chat_request'] = true;
                         $client->send(json_encode($send_data));
                     }

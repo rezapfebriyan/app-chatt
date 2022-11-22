@@ -147,7 +147,7 @@
 					</div>
 				</li>
 				`; // ketika button diklik, maka akan call method send request dan set type == request_chat_user
-                    // jadi data from_user_id dan to_user_id akan masuk ke tabel
+                    // jadi data from_user_id dan to_user_id akan masuk ke tabel chat_request
                 }
 
                 html += '</ul>';
@@ -158,6 +158,7 @@
             document.getElementById('search_people_area').innerHTML = html;
         }
 
+        // setelah button send diklik, key response_from_user di set jadi true
         if (data.response_from_user_chat_request) {
             search_user(from_user_id, document.getElementById('search_people').value);
 
