@@ -169,6 +169,7 @@
             load_unread_notification(data.user_id);
         }
 
+        // dan ini jadi true kalo button send diklik
         if (data.response_load_notification) {
             var html = '';
 
@@ -189,6 +190,7 @@
 					<div class="col col-8">` + user_image + `&nbsp;` + data.data[count].name + `</div>
 					<div class="col col-4">
 			`;
+                // ditampilkan di user yg send request
                 if (data.data[count].notification_type == 'Send Request') {
                     if (data.data[count].status == 'Pending') {
                         html +=

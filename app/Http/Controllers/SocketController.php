@@ -211,13 +211,16 @@ class SocketController extends Controller implements MessageComponentInterface
                 {
                     $user_id = '';
                     $notification_type = '';
+                    // cek apakah from_user == user_id yg dari JSON $msg
                     if($row->from_user_id == $data->user_id)
-                    {
+                    { // akan ada notif di user yg ngirim request
+                        // set notinya
                         $user_id = $row->to_user_id;
                         $notification_type = 'Send Request';
                     }
                     else
-                    {
+                    { // set notif
+                        // jadi di user yg dikirimin request_chat, akan muncul notif
                         $user_id = $row->from_user_id;
                         $notification_type = 'Receive Request';
                     }
@@ -235,6 +238,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     ];
                 }
 
+                // get connection_id user login
                 $sender_connection_id = User::select('connection_id')->where('id', $data->user_id)->get();
 
                 foreach($this->clients as $client)
@@ -243,6 +247,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     {
                         $send_data['response_load_notification'] = true;
                         $send_data['data'] = $sub_data;
+                        // kirim data user login (client)
                         $client->send(json_encode($send_data));
                     }
                 }
