@@ -179,6 +179,7 @@ class SocketController extends Controller implements MessageComponentInterface
                         $client->send(json_encode($send_data));
                     }
 
+                    //* cek apakah koneksi sesuai dengan koneksi user penerima
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->to_user_id;
@@ -214,7 +215,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     // cek apakah from_user == user_id yg dari JSON $msg
                     if($row->from_user_id == $data->user_id)
                     { // akan ada notif di user yg ngirim request
-                        // set notinya
+                        // set notifnya
                         $user_id = $row->to_user_id;
                         $notification_type = 'Send Request';
                     }

@@ -158,8 +158,9 @@
             document.getElementById('search_people_area').innerHTML = html;
         }
 
-        // setelah button send diklik, key response_from_user di set jadi true
+        // setelah button send diklik, key response_from_user di set jadi true, maka perintah ini dijalankan
         if (data.response_from_user_chat_request) {
+            // kirim auth()->user_id dan value query search
             search_user(from_user_id, document.getElementById('search_people').value);
 
             load_unread_notification(from_user_id);
@@ -200,6 +201,7 @@
                             '<button type="button" name="send_request" class="btn btn-danger btn-sm float-end">Request Rejected</button>';
                     }
                 } else {
+                    // ditampilkan di user penerima request
                     if (data.data[count].status == 'Pending') {
                         html +=
                             '<button type="button" class="btn btn-danger btn-sm float-end" onclick="process_chat_request(' +
