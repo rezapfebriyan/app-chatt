@@ -135,7 +135,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     //* cek apakah id user()->auth dan id user respon chat request ada di tabel chat_request
                     if($chat_request->count() == 0)
                     {
-                        //* tampilkan list data user yg tidak ada di tabel chat_request
+                        //! tampilkan list data user yg tidak ada di tabel chat_request
                         //* karena user yg dipilih untuk request chat akan hilang dari list
                         $sub_data[] = [
                             'name'      => $row['name'],
@@ -152,7 +152,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($this->clients as $client)
                 {
-                    //* cek apakah koneksi sesuai dengan koneksi auth()->user
+                    //* cek apakah koneksi sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $client->send(json_encode($send_data));
@@ -173,10 +173,10 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($this->clients as $client)
                 {
-                    //* cek apakah koneksi sesuai dengan koneksi auth()->user
+                    //* cek apakah koneksi sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
-                        //* kirim respon ke auth()->user dan set key tsb jadi true
+                        //* set key tsb jadi true
                         $send_data['response_from_user_chat_request'] = true;
                         $client->send(json_encode($send_data));
                     }
@@ -184,7 +184,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     //* cek apakah koneksi sesuai dengan koneksi user penerima
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
-                        $send_data['user_id'] = $data->to_user_id;
+                        $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user tujuan
                         $send_data['response_to_user_chat_request'] = true;
                         $client->send(json_encode($send_data));
                     }
@@ -269,7 +269,7 @@ class SocketController extends Controller implements MessageComponentInterface
                 {
                     $send_data['response_process_chat_request'] = true;
 
-                    //* cek apakah koneksi sesuai dengan koneksi auth()->user
+                    //* cek apakah koneksi sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->from_user_id;
