@@ -203,14 +203,17 @@
                 } else {
                     // ditampilkan di user penerima request
                     if (data.data[count].status == 'Pending') {
+                        // REJECT
                         html +=
                             '<button type="button" class="btn btn-danger btn-sm float-end" onclick="process_chat_request(' +
                             data.data[count].id + ', ' + data.data[count].from_user_id + ', ' + data.data[count]
                             .to_user_id + ', `Reject`)"><i class="fas fa-times"></i></button>&nbsp;';
+                        // APPROVE
                         html +=
                             '<button type="button" class="btn btn-success btn-sm float-end" onclick="process_chat_request(' +
                             data.data[count].id + ', ' + data.data[count].from_user_id + ', ' + data.data[count]
-                            .to_user_id + ', `Approve`)"><i class="fas fa-check"></i></button>';
+                            .to_user_id +
+                            ', `Approve`)"><i class="fas fa-check"></i></button>'; // diklik bakal hilang di list user pengirim dan penerima
                     } else {
                         html +=
                             '<button type="button" name="send_request" class="btn btn-danger btn-sm float-end">Request Rejected</button>';
@@ -499,6 +502,7 @@
 
     }
 
+    // video 11
     function process_chat_request(chat_request_id, from_user_id, to_user_id, action) {
         var data = {
             chat_request_id: chat_request_id,

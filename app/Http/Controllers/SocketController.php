@@ -272,12 +272,13 @@ class SocketController extends Controller implements MessageComponentInterface
                     //* cek apakah koneksi sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
-                        $send_data['user_id'] = $data->from_user_id;
+                        $send_data['user_id'] = $data->from_user_id; //! set user_id jadi id user pengirim
                     }
-
+                    
+                    //* cek apakah koneksi sesuai dengan koneksi user penerima
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
-                        $send_data['user_id'] = $data->to_user_id;
+                        $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user penerima
                     }
 
                     $client->send(json_encode($send_data));
