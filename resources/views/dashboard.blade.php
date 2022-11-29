@@ -515,6 +515,7 @@
         conn.send(JSON.stringify(data));
     }
 
+    // video 12
     function load_connected_chat_user(from_user_id) {
         var data = {
             from_user_id: from_user_id,

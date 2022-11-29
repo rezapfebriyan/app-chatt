@@ -287,7 +287,12 @@ class SocketController extends Controller implements MessageComponentInterface
 
             if($data->type == 'request_connected_chat_user')
             {
-                $condition_1 = ['from_user_id' => $data->from_user_id, 'to_user_id' => $data->from_user_id];
+                $condition_1 = [
+                    'from_user_id' => $data->from_user_id,
+                    'to_user_id' => $data->from_user_id
+                ];
+
+                //* get data user yg Approve
                 $user_id_data = Chat_request::select('from_user_id', 'to_user_id')
                                                 ->orWhere($condition_1)
                                                 ->where('status', 'Approve')
