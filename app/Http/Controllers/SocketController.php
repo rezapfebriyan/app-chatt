@@ -71,11 +71,12 @@ class SocketController extends Controller implements MessageComponentInterface
             }
         }
 
-        $data = json_decode($msg);
+        $data = json_decode($msg); //! convert to object
         if(isset($data->type))
         {
             if($data->type == 'request_load_unconnected_user')
             {
+                //* get list user yg mau dichat
                 $user_data = User::select('id', 'name', 'user_status', 'user_image')
                                     ->where('id', '!=', $data->from_user_id)
                                     ->orderBy('name', 'ASC')
@@ -93,12 +94,14 @@ class SocketController extends Controller implements MessageComponentInterface
                     ];
                 }
 
+                //* data id pengirim
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
-                $send_data['data'] = $sub_data;
+                $send_data['data'] = $sub_data; //! isi dengan data yg diset ketika loop diatas
                 $send_data['response_load_unconnected_user'] = true;
 
                 foreach($this->clients as $client)
                 {
+                    //* cek apakah resourceId di koneksi websocket == connection_id auth()->user
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $client->send(json_encode($send_data));
