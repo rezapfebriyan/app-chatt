@@ -19,17 +19,20 @@ class SocketController extends Controller implements MessageComponentInterface
         $this->clients = new \SplObjectStorage; 
     }
 
-    //* akan dipanggil ketika permintaan koneksi baru telah diterima
+    //* akan dipanggil ketika permintaan koneksi baru telah diterima / koneksi established
     public function onOpen(ConnectionInterface $conn)
     {
         //! tambah koneksi data baru
         $this->clients->attach($conn); //* menambahkan objek $conn (store connection_id) ke $this->client
-        $querystring = $conn->httpRequest->getUri()->getQuery();
-        parse_str($querystring, $queryarray);
+
+        //! isi variable dengan request URI dari objek koneksi established, dan convert to string
+        $querystring = $conn->httpRequest->getUri()->getQuery(); //* return URI koneksi established berupa string
+        parse_str($querystring, $queryarray); //! convert string to array
 
         if(isset($queryarray['token']))
         {
             User::where('token', $queryarray['token'])->update([
+                //! ubah column connection_id dengan $->resourceId
                 'connection_id' => $conn->resourceId,
                 'user_status' => 'Online'
             ]);
@@ -501,12 +504,15 @@ class SocketController extends Controller implements MessageComponentInterface
     {
         //! matikan koneksi websocket
         $this->clients->detach($conn);
-        $querystring = $conn->httpRequest->getUri()->getQuery();
-        parse_str($querystring, $queryarray);
+
+        //! isi variable dengan request URI dari objek koneksi established, dan convert to string
+        $querystring = $conn->httpRequest->getUri()->getQuery(); //* return URI koneksi established berupa string
+        parse_str($querystring, $queryarray); //! convert string to array
 
         if(isset($queryarray['token']))
         {
             User::where('token', $queryarray['token'])->update([
+                //! ubah column connection_id jadi 0
                 'connection_id' => 0,
                 'user_status' => 'Offline'
             ]);
