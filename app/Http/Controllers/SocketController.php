@@ -19,9 +19,11 @@ class SocketController extends Controller implements MessageComponentInterface
         $this->clients = new \SplObjectStorage; 
     }
 
+    //* akan dipanggil ketika permintaan koneksi baru telah diterima
     public function onOpen(ConnectionInterface $conn)
     {
-        $this->clients->attach($conn);
+        //! tambah koneksi data baru
+        $this->clients->attach($conn); //* menambahkan objek $conn (store connection_id) ke $this->client
         $querystring = $conn->httpRequest->getUri()->getQuery();
         parse_str($querystring, $queryarray);
 
@@ -309,6 +311,7 @@ class SocketController extends Controller implements MessageComponentInterface
                 {
                     $user_id = '';
 
+                    //* kalo
                     if($user_id_row->from_user_id != $data->from_user_id)
                     {
                         $user_id = $user_id_row->from_user_id;
@@ -493,8 +496,10 @@ class SocketController extends Controller implements MessageComponentInterface
         }
     }
 
+    //* dipanggil ketika websocket connection telah dimatikan
     public function onClose(ConnectionInterface $conn)
     {
+        //! matikan koneksi websocket
         $this->clients->detach($conn);
         $querystring = $conn->httpRequest->getUri()->getQuery();
         parse_str($querystring, $queryarray);

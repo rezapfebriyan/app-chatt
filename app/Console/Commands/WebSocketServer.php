@@ -33,7 +33,7 @@ class WebSocketServer extends Command
      */
     public function handle()
     {
-        // setup server
+        //! setup server
         $server = IoServer::factory(
             new HttpServer(new WsServer(
                     new SocketController()

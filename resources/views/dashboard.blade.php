@@ -81,6 +81,7 @@
     var from_user_id = "{{ Auth::user()->id }}";
     var to_user_id = "";
 
+    // dipanggil ketika koneksi baru websocket sudah dihidupkan
     conn.onopen = function(e) {
         console.log("Connection established!");
 
@@ -89,6 +90,7 @@
         load_connected_chat_user(from_user_id);
     };
 
+    // dipanggil ketika pesan telah diterima
     conn.onmessage = function(e) {
         var data = JSON.parse(e.data);
 
