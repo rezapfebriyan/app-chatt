@@ -120,6 +120,7 @@
             }
         }
 
+        // jika load_user_unconnect || user yg diinputkan == true
         if (data.response_load_unconnected_user || data.response_search_user) {
             var html = '';
 
@@ -469,6 +470,7 @@
         conn.send(JSON.stringify(data));
     }
 
+    // video 8
     function search_user(from_user_id, search_query) {
         if (search_query.length > 0) {
             var data = {

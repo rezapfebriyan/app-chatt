@@ -71,7 +71,7 @@ class SocketController extends Controller implements MessageComponentInterface
             }
         }
 
-        $data = json_decode($msg); //! convert to object
+        $data = json_decode($msg); //! convert to array
         if(isset($data->type))
         {
             if($data->type == 'request_load_unconnected_user')
@@ -111,6 +111,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
             if($data->type == 'request_search_user')
             {
+                //* get list user yg mau dichat sesuai yg diinputkan
                 $user_data = User::select('id', 'name', 'user_status', 'user_image')
                                     ->where('id', '!=', $data->from_user_id)
                                     ->where('name', 'like', '%'.$data->search_query.'%')
@@ -121,6 +122,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($user_data as $row)
                 {
+                    //* data pengirim chat_request OR penerima chat_request
                     $chat_request = Chat_request::select('id')
                                                     ->where(function($query) use ($data, $row) {
                                                         $query
@@ -144,7 +146,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     if($chat_request->count() == 0)
                     {
                         //! tampilkan list data user yg tidak ada di tabel chat_request
-                        //* karena user yg dipilih untuk request chat akan hilang dari list
+                        //* isikan properti dgn hasil loop dari data yg diinputkan ketika searching
                         $sub_data[] = [
                             'name'      => $row['name'],
                             'id'        => $row['id'],
@@ -154,8 +156,9 @@ class SocketController extends Controller implements MessageComponentInterface
                     }
                 }
 
+                //* data id pengirim
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
-                $send_data['data'] = $sub_data;
+                $send_data['data'] = $sub_data; //! isi dengan sub_data yg diset di atas
                 $send_data['response_search_user'] = true;
 
                 foreach($this->clients as $client)
@@ -163,7 +166,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     //* cek apakah koneksi sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
-                        $client->send(json_encode($send_data));
+                        $client->send(json_encode($send_data)); //! convert to object
                     }
                 }
             }
