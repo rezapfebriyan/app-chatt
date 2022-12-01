@@ -161,7 +161,7 @@
             document.getElementById('search_people_area').innerHTML = html;
         }
 
-        // setelah button send diklik, key response_from_user di set jadi true, maka perintah ini dijalankan
+        // setelah button send diklik, key response_from_user di set jadi true
         if (data.response_from_user_chat_request) {
             // kirim auth()->user_id dan value query search
             search_user(from_user_id, document.getElementById('search_people').value);
@@ -485,6 +485,7 @@
         }
     }
 
+    // video 9
     function send_request(element, from_user_id, to_user_id) {
         var data = {
             from_user_id: from_user_id,
