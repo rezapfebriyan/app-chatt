@@ -196,18 +196,19 @@ class SocketController extends Controller implements MessageComponentInterface
                         $client->send(json_encode($send_data)); //! convert to object
                     }
 
-                    //* cek apakah koneksi sesuai dengan koneksi user penerima
+                    //* cek apakah koneksi websocket sesuai dengan koneksi user penerima
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user tujuan
                         $send_data['response_to_user_chat_request'] = true;
-                        $client->send(json_encode($send_data));
+                        $client->send(json_encode($send_data)); //! convert to object
                     }
                 }
             }
 
             if($data->type == 'request_load_unread_notification')
             {
+                //* ngambil data di chat_request yg statusnya belum approve
                 $notification_data = Chat_request::select('id', 'from_user_id', 'to_user_id', 'status')
                                                     ->where('status', '!=', 'Approve')
                                                     ->where(function($query) use ($data) {
@@ -229,7 +230,8 @@ class SocketController extends Controller implements MessageComponentInterface
                 {
                     $user_id = '';
                     $notification_type = '';
-                    //* cek apakah from_user == user_id yg dari JSON $msg
+                    //* cek apakah from_user_id (dari data yg di loop) == user_id yang dari $msg (=berarti where user auth)
+                    //? maksudnya kalo true, di user auth() akan menampilkan yg didalam block
                     if($row->from_user_id == $data->user_id)
                     { //* akan ada notif di user yg ngirim request
                         //! set notifnya
@@ -243,6 +245,7 @@ class SocketController extends Controller implements MessageComponentInterface
                         $notification_type = 'Receive Request';
                     }
 
+                    //* data untuk menampilkan user di list notification
                     $user_data = User::select('name', 'user_image')->where('id', $user_id)->first();
 
                     $sub_data[] = [
@@ -256,7 +259,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     ];
                 }
 
-                // get connection_id user login
+                //* ambil connection_id user login
                 $sender_connection_id = User::select('connection_id')->where('id', $data->user_id)->get();
 
                 foreach($this->clients as $client)

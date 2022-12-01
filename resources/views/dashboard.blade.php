@@ -86,7 +86,7 @@
         console.log("Connection established!");
 
         load_unconnected_user(from_user_id); // akan ngeload list user yg mau dichat
-        load_unread_notification(from_user_id);
+        load_unread_notification(from_user_id); // akan menampilkan list notification
         load_connected_chat_user(from_user_id);
     };
 
@@ -231,6 +231,7 @@
 			`;
             }
 
+            // tampilkan html di list notification
             document.getElementById('notification_area').innerHTML = html;
         }
 
@@ -499,13 +500,14 @@
         conn.send(JSON.stringify(data));
     }
 
+    // video 10
     function load_unread_notification(user_id) {
         var data = {
             user_id: user_id,
             type: 'request_load_unread_notification'
         };
 
-        conn.send(JSON.stringify(data));
+        conn.send(JSON.stringify(data)); // data yg dikirimkan ke parameter $msg
 
     }
 
