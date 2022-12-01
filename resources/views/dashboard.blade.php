@@ -162,6 +162,7 @@
         }
 
         // setelah button send diklik, key response_from_user di set jadi true
+        // blok ini untuk menampilkan list user yg belum dikirim chat_request
         if (data.response_from_user_chat_request) {
             // kirim auth()->user_id dan value query search
             search_user(from_user_id, document.getElementById('search_people').value);
