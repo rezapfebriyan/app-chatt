@@ -101,7 +101,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($this->clients as $client)
                 {
-                    //* cek apakah resourceId di koneksi websocket == connection_id auth()->user
+                    //* cek apakah koneksi websocket (=berarti user auth) == koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $client->send(json_encode($send_data));
@@ -142,7 +142,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     OR (from_user_id = $row->id AND to_user_id = $data->from_user_id)
                     */
 
-                    //TODO:     jadi setelah button send_request_chat diklik, maka user yg dipilih akan hilang dari list
+                    //?    jadi setelah button send_request_chat diklik, maka user yg dipilih akan hilang dari list
 
                     //* ngecek kalo auth()->id dan id penerima chat_request kosong
                     if($chat_request->count() == 0)
@@ -198,7 +198,7 @@ class SocketController extends Controller implements MessageComponentInterface
                         $client->send(json_encode($send_data)); //! convert to object
                     }
 
-                    //* cek apakah koneksi websocket sesuai dengan koneksi user penerima
+                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi user penerima
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user tujuan
@@ -296,13 +296,13 @@ class SocketController extends Controller implements MessageComponentInterface
 
                     //TODO:::::::  SEND DATA KE USER PENGIRIM   :::::::
 
-                    //* cek apakah koneksi websocket sesuai dengan koneksi user pengirim
+                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->from_user_id; //! set user_id jadi id user pengirim
                     }
                     
-                    //* cek apakah koneksi websocket sesuai dengan koneksi user penerima
+                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi user penerima
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user penerima
@@ -315,11 +315,13 @@ class SocketController extends Controller implements MessageComponentInterface
             if($data->type == 'request_connected_chat_user')
             {
                 $condition_1 = [
+                    //! isikan dengan id auth()
                     'from_user_id' => $data->from_user_id,
                     'to_user_id' => $data->from_user_id
                 ];
 
                 //* get data user yg Approve
+                //? entah auth() yg ngerequest / auth() yg nerima request
                 $user_id_data = Chat_request::select('from_user_id', 'to_user_id')
                                                 ->orWhere($condition_1)
                                                 ->where('status', 'Approve')
@@ -332,20 +334,24 @@ class SocketController extends Controller implements MessageComponentInterface
                 */
                 $sub_data = [];
 
+                //TODO:::::::  NGE GET DATA USER YG UDAH APPROVE REQUEST CHAT   :::::::
+
                 foreach($user_id_data as $user_id_row)
                 {
                     $user_id = '';
 
-                    //* kalo
+                    //* kalo dia user yg nerima request
                     if($user_id_row->from_user_id != $data->from_user_id)
                     {
-                        $user_id = $user_id_row->from_user_id;
+                        $user_id = $user_id_row->from_user_id; //! isikan dengan from_user_id yg diloop
                     }
                     else
+                    //* kalo dia user pengirim request
                     {
-                        $user_id = $user_id_row->to_user_id;
+                        $user_id = $user_id_row->to_user_id; //! isikan dengan to_user_id yg diloop
                     }
 
+                    //* ambil data user berdasarkan id dari kondisi if diatas
                     $user_data = User::select('id', 'name', 'user_image', 'user_status', 'updated_at')
                                         ->where('id', $user_id)
                                         ->first();
@@ -368,11 +374,14 @@ class SocketController extends Controller implements MessageComponentInterface
                     ];
                 }
 
+                //* ambil data pengirim request 
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
+
+                //TODO:::::::  SEND DATA TO USER LOGIN   :::::::
 
                 foreach($this->clients as $client)
                 {
-                    //* cek apakah koneksi sesuai dengan koneksi auth()->user
+                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['response_connected_chat_user'] = true;

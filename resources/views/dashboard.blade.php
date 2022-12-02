@@ -87,7 +87,7 @@
 
         load_unconnected_user(from_user_id); // akan ngeload list user yg mau dichat
         load_unread_notification(from_user_id); // akan menampilkan list notification
-        load_connected_chat_user(from_user_id);
+        load_connected_chat_user(from_user_id); // akan menampilkan list user yg approved chat_request
     };
 
     // dipanggil ketika pesan telah diterima
@@ -237,9 +237,10 @@
 
         if (data.response_process_chat_request) {
             load_unread_notification(data.user_id); // akan menampilkan list notification
-            load_connected_chat_user(data.user_id);
+            load_connected_chat_user(data.user_id); // akan menampilkan list user yg terkoneksi (abis di approve)
         }
 
+        // menampilkan list user yg approve chat_request
         if (data.response_connected_chat_user) {
             var html = '<div class="list-group">';
 
@@ -531,7 +532,7 @@
             type: 'request_connected_chat_user'
         };
 
-        conn.send(JSON.stringify(data));
+        conn.send(JSON.stringify(data)); // data yg dikirimkan ke parameter $msg
     }
 
     function make_chat_area(user_id, to_user_name) {
