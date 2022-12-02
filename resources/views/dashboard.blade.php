@@ -556,9 +556,10 @@
     }
 
     function close_chat() {
-        document.getElementById('chat_header').innerHTML = 'Chat Area';
-        document.getElementById('close_chat_area').innerHTML = '';
-        document.getElementById('chat_area').innerHTML = '';
+        document.getElementById('chat_header').innerHTML = 'Chat Area'; // nampilin string di header
+
+        document.getElementById('close_chat_area').innerHTML = ''; // menghilangkan tombol close
+        document.getElementById('chat_area').innerHTML = ''; // menghapus area chattingan dari halaman browser
 
         to_user_id = '';
     }
