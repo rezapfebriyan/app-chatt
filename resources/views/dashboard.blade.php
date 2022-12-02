@@ -167,11 +167,11 @@
             // kirim auth()->user_id dan value query search
             search_user(from_user_id, document.getElementById('search_people').value);
 
-            load_unread_notification(from_user_id);
+            load_unread_notification(from_user_id); // akan menampilkan list notification
         }
 
         if (data.response_to_user_chat_request) {
-            load_unread_notification(data.user_id);
+            load_unread_notification(data.user_id); // akan menampilkan list notification
         }
 
         // dan ini jadi true kalo button send diklik
@@ -207,17 +207,17 @@
                 } else {
                     // ditampilkan di user penerima request
                     if (data.data[count].status == 'Pending') {
-                        // REJECT
+                        // call function process_chat_request() sekaligus kirim parameternya untuk me-REJECT
                         html +=
                             '<button type="button" class="btn btn-danger btn-sm float-end" onclick="process_chat_request(' +
                             data.data[count].id + ', ' + data.data[count].from_user_id + ', ' + data.data[count]
                             .to_user_id + ', `Reject`)"><i class="fas fa-times"></i></button>&nbsp;';
-                        // APPROVE
+                        // call function process_chat_request() sekaligus kirim parameternya untuk me-APPROVE
                         html +=
                             '<button type="button" class="btn btn-success btn-sm float-end" onclick="process_chat_request(' +
                             data.data[count].id + ', ' + data.data[count].from_user_id + ', ' + data.data[count]
                             .to_user_id +
-                            ', `Approve`)"><i class="fas fa-check"></i></button>'; // diklik bakal hilang di list user pengirim dan penerima
+                            ', `Approve`)"><i class="fas fa-check"></i></button>'; // pas diklik bakal hilang di list notification di client user pengirim dan penerima
                     } else {
                         html +=
                             '<button type="button" name="send_request" class="btn btn-danger btn-sm float-end">Request Rejected</button>';
@@ -236,7 +236,7 @@
         }
 
         if (data.response_process_chat_request) {
-            load_unread_notification(data.user_id);
+            load_unread_notification(data.user_id); // akan menampilkan list notification
             load_connected_chat_user(data.user_id);
         }
 
@@ -521,7 +521,7 @@
             type: 'request_process_chat_request'
         };
 
-        conn.send(JSON.stringify(data));
+        conn.send(JSON.stringify(data)); // data yg dikirimkan ke parameter $msg
     }
 
     // video 12

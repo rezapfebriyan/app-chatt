@@ -184,6 +184,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 //* ambil data connection_id sender_chat untuk dikirim respon
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
+                //* ambil data connection_id penerima untuk dikirim respon
                 $receiver_connection_id = User::select('connection_id')->where('id', $data->to_user_id)->get();
 
                 foreach($this->clients as $client)
@@ -193,6 +194,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     {
                         //* set key tsb jadi true untuk send response
                         $send_data['response_from_user_chat_request'] = true;
+
                         $client->send(json_encode($send_data)); //! convert to object
                     }
 
@@ -201,6 +203,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     {
                         $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user tujuan
                         $send_data['response_to_user_chat_request'] = true;
+
                         $client->send(json_encode($send_data)); //! convert to object
                     }
                 }
@@ -259,7 +262,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     ];
                 }
 
-                //* ambil connection_id user login
+                //* ambil connection_id user pengirim
                 $sender_connection_id = User::select('connection_id')->where('id', $data->user_id)->get();
 
                 foreach($this->clients as $client)
@@ -277,29 +280,35 @@ class SocketController extends Controller implements MessageComponentInterface
 
             if($data->type == 'request_process_chat_request')
             {
+                //* ambil data chat_request untuk diubah statusnya (to be reject/approve)
                 Chat_request::where('id', $data->chat_request_id)->update([
                     'status' => $data->action
                 ]);
+
+                //* ambil connection_id user pengirim chat_request
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
+                //* ambil connection_id user penerima chat_request
                 $receiver_connection_id = User::select('connection_id')->where('id', $data->to_user_id)->get();
 
                 foreach($this->clients as $client)
                 {
                     $send_data['response_process_chat_request'] = true;
 
-                    //* cek apakah koneksi sesuai dengan koneksi user pengirim
+                    //TODO:::::::  SEND DATA KE USER PENGIRIM   :::::::
+
+                    //* cek apakah koneksi websocket sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->from_user_id; //! set user_id jadi id user pengirim
                     }
                     
-                    //* cek apakah koneksi sesuai dengan koneksi user penerima
+                    //* cek apakah koneksi websocket sesuai dengan koneksi user penerima
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user penerima
                     }
 
-                    $client->send(json_encode($send_data));
+                    $client->send(json_encode($send_data)); //! convert to object
                 }
             }
 
