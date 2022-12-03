@@ -393,6 +393,8 @@ class SocketController extends Controller implements MessageComponentInterface
 
             if($data->type == 'request_send_message')
             {
+                //? data yg diterima dari dashboard, diinputkan ke class Chat
+
                 //save chat message in mysql
                 $chat = new Chat;
                 $chat->from_user_id = $data->from_user_id;
@@ -402,11 +404,16 @@ class SocketController extends Controller implements MessageComponentInterface
                 $chat->save();
 
                 $chat_message_id = $chat->id;
+                //* ambil connection_id user penerima chat
                 $receiver_connection_id = User::select('connection_id')->where('id', $data->to_user_id)->get();
+                //* ambil connection_id user pengirim chat
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
 
                 foreach($this->clients as $client)
                 {
+                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi user penerima
+                    //?     OR
+                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi pengirim
                     if($client->resourceId == $receiver_connection_id[0]->connection_id || $client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['chat_message_id'] = $chat_message_id;
@@ -414,6 +421,7 @@ class SocketController extends Controller implements MessageComponentInterface
                         $send_data['from_user_id'] = $data->from_user_id;
                         $send_data['to_user_id'] = $data->to_user_id;
 
+                        //* kalo dia penerima
                         if($client->resourceId == $receiver_connection_id[0]->connection_id)
                         {
                             Chat::where('id', $chat_message_id)->update([

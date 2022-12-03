@@ -301,6 +301,7 @@
         if (data.message) {
             var html = '';
 
+            // data yg diterima pengirim chat
             if (data.from_user_id == from_user_id) {
 
                 var icon_style = '';
@@ -309,11 +310,13 @@
                     icon_style = '<span id="chat_status_' + data.chat_message_id +
                         '" class="float-end"><i class="fas fa-check text-muted"></i></span>';
                 }
+                // kalo udah terkirim tampilkan centang 1
                 if (data.message_status == 'Send') {
                     icon_style = '<span id="chat_status_' + data.chat_message_id +
                         '" class="float-end"><i class="fas fa-check-double text-muted"></i></span>';
                 }
 
+                // kalo udah dibaca tampilkan centang 2 biru
                 if (data.message_status == 'Read') {
                     icon_style = '<span class="text-primary float-end" id="chat_status_' + data.chat_message_id +
                         '"><i class="fas fa-check-double"></i></span>';
@@ -327,7 +330,9 @@
 				</div>
 			</div>
 			`;
-            } else {
+            } else
+            // yg diterima penerima chat
+            {
                 if (to_user_id != '') {
                     html += `
 				<div class="row">
@@ -576,10 +581,10 @@
             type: 'request_send_message'
         };
 
-        conn.send(JSON.stringify(data));
+        conn.send(JSON.stringify(data)); // kirim data ke server websocket (ke param $msg)
 
         document.querySelector('#message_area').innerHTML = '';
-        document.querySelector('#send_button').disabled = false;
+        document.querySelector('#send_button').disabled = false; // enable tombol kirim
     }
 
     function load_chat_data(from_user_id, to_user_id) {
