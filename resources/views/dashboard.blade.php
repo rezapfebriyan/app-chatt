@@ -310,7 +310,7 @@
                     icon_style = '<span id="chat_status_' + data.chat_message_id +
                         '" class="float-end"><i class="fas fa-check text-muted"></i></span>';
                 }
-                // kalo udah terkirim tampilkan centang 1
+                // kalo penerima udah login, tampilkan centang 2
                 if (data.message_status == 'Send') {
                     icon_style = '<span id="chat_status_' + data.chat_message_id +
                         '" class="float-end"><i class="fas fa-check-double text-muted"></i></span>';

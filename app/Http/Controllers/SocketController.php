@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Ratchet\MessageComponentInterface;
-use Ratchet\ConnectionInterface;
+use Ratchet\{ MessageComponentInterface, ConnectionInterface };
 use App\Models\{ User, Chat, Chat_request };
 
 use Auth;
