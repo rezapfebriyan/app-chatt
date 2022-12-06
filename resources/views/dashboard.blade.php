@@ -379,16 +379,19 @@
                 if (data.chat_history[count].from_user_id == from_user_id) {
                     var icon_style = '';
 
+                    // kalo penerima belum login, tampilin icon ceklis 1
                     if (data.chat_history[count].message_status == 'Not Send') {
                         icon_style = '<span id="chat_status_' + data.chat_history[count].id +
                             '" class="float-end"><i class="fas fa-check text-muted"></i></span>';
                     }
 
+                    // kalo penerima udah login, tampilkan icon ceklis 2
                     if (data.chat_history[count].message_status == 'Send') {
                         icon_style = '<span id="chat_status_' + data.chat_history[count].id +
                             '" class="float-end"><i class="fas fa-check-double text-muted"></i></span>';
                     }
 
+                    // kalo udah dibaca, tampilkan icon ceklis 2 biru
                     if (data.chat_history[count].message_status == 'Read') {
                         icon_style = '<span class="text-primary float-end" id="chat_status_' + data.chat_history[
                             count].id + '"><i class="fas fa-check-double"></i></span>';
@@ -569,6 +572,7 @@
         to_user_id = '';
     }
 
+    // video 15
     function send_chat_message() {
         document.querySelector('#send_button').disabled = true;
 
@@ -587,6 +591,8 @@
         document.querySelector('#send_button').disabled = false; // enable tombol kirim
     }
 
+    // video
+    // di call ketika klik user yg di list connected (jadi akan nampilkan data dari db)
     function load_chat_data(from_user_id, to_user_id) {
         var data = {
             from_user_id: from_user_id,

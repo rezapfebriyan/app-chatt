@@ -424,13 +424,16 @@ class SocketController extends Controller implements MessageComponentInterface
                         //* kalo dia penerima
                         if($client->resourceId == $receiver_connection_id[0]->connection_id)
                         {
+                            //! ubah statusnya jadi terkirim
                             Chat::where('id', $chat_message_id)->update([
                                 'message_status' =>'Send'
                             ]);
                             $send_data['message_status'] = 'Send';
                         }
+                        //* kalo dia pengirim
                         else
                         {
+                            //? statusnya not send, karena penerima belum login
                             $send_data['message_status'] = 'Not Send';
                         }
 
@@ -441,6 +444,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
             if($data->type == 'request_chat_history')
             {
+                //* get data tabel chat berdasarkan user auth dan user yg diklik
                 $chat_data = Chat::select('id', 'from_user_id', 'to_user_id', 'chat_message', 'message_status')
                                     ->where(function($query) use ($data) {
                                         $query
@@ -462,12 +466,16 @@ class SocketController extends Controller implements MessageComponentInterface
                 ORDER BY id ASC
                 */
                 $send_data['chat_history'] = $chat_data;
+
+                //* ambil connection_id user penerima chat
                 $receiver_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
 
                 foreach($this->clients as $client)
                 {
+                    //* kalo dia penerima chat
                     if($client->resourceId == $receiver_connection_id[0]->connection_id)
                     {
+                        //! kirim datanya, jadi bakal nampil di chat history
                         $client->send(json_encode($send_data));
                     }
                 }
