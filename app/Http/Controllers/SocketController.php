@@ -167,7 +167,7 @@ class SocketController extends Controller implements MessageComponentInterface
                     //* cek apakah koneksi sesuai dengan koneksi user pengirim
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
-                        $client->send(json_encode($send_data)); //! convert to object
+                        $client->send(json_encode($send_data)); //! kirim data ke dashboard dan convert to object
                     }
                 }
             }
@@ -188,13 +188,13 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($this->clients as $client)
                 {
-                    //* cek apakah koneksi client sesuai dengan koneksi_id user pengirim
+                    //* cek apakah user auth() == pengirim chat
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         //* set key tsb jadi true untuk send response
                         $send_data['response_from_user_chat_request'] = true;
 
-                        $client->send(json_encode($send_data)); //! convert to object
+                        $client->send(json_encode($send_data)); //! kirim data ke dashboard dan convert to object
                     }
 
                     //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi user penerima
@@ -203,7 +203,7 @@ class SocketController extends Controller implements MessageComponentInterface
                         $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user tujuan
                         $send_data['response_to_user_chat_request'] = true;
 
-                        $client->send(json_encode($send_data)); //! convert to object
+                        $client->send(json_encode($send_data)); //! kirim data ke dashboard dan convert to object
                     }
                 }
             }
@@ -271,8 +271,8 @@ class SocketController extends Controller implements MessageComponentInterface
                     {
                         $send_data['response_load_notification'] = true;
                         $send_data['data'] = $sub_data;
-                        //! kirim data user login (client)
-                        $client->send(json_encode($send_data));
+                        
+                        $client->send(json_encode($send_data)); //! kirim data ke dashboard dan convert to object
                     }
                 }
             }
@@ -295,7 +295,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
                     //TODO:::::::  SEND DATA KE USER PENGIRIM   :::::::
 
-                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi user pengirim
+                    //* cek apakah user auth() == pengirim chat
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['user_id'] = $data->from_user_id; //! set user_id jadi id user pengirim
@@ -307,7 +307,7 @@ class SocketController extends Controller implements MessageComponentInterface
                         $send_data['user_id'] = $data->to_user_id; //! set user_id jadi id user penerima
                     }
 
-                    $client->send(json_encode($send_data)); //! convert to object
+                    $client->send(json_encode($send_data)); //! kirim data ke dashboard dan convert to object
                 }
             }
 
@@ -380,7 +380,7 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($this->clients as $client)
                 {
-                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi pengirim
+                    //* cek apakah user auth() == pengirim chat
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['response_connected_chat_user'] = true;
@@ -402,7 +402,9 @@ class SocketController extends Controller implements MessageComponentInterface
                 $chat->message_status = 'Not Send';
                 $chat->save();
 
+                //! ambil id chat yg baru dimasukkan ke tabel (yg baru disave)
                 $chat_message_id = $chat->id;
+
                 //* ambil connection_id user penerima chat
                 $receiver_connection_id = User::select('connection_id')->where('id', $data->to_user_id)->get();
                 //* ambil connection_id user pengirim chat
@@ -410,9 +412,9 @@ class SocketController extends Controller implements MessageComponentInterface
 
                 foreach($this->clients as $client)
                 {
-                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi user penerima
+                    //* cek apakah user penerima yg login
                     //?     OR
-                    //* cek apakah koneksi websocket (=berarti user auth) sesuai dengan koneksi pengirim
+                    //* cek apakah user pengirim yg login
                     if($client->resourceId == $receiver_connection_id[0]->connection_id || $client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['chat_message_id'] = $chat_message_id;
@@ -420,23 +422,24 @@ class SocketController extends Controller implements MessageComponentInterface
                         $send_data['from_user_id'] = $data->from_user_id;
                         $send_data['to_user_id'] = $data->to_user_id;
 
-                        //* kalo dia penerima
+                        //* kalo user penerima login
                         if($client->resourceId == $receiver_connection_id[0]->connection_id)
                         {
+                            //* ambil data chat yg baru disave diatas
                             //! ubah statusnya jadi terkirim
                             Chat::where('id', $chat_message_id)->update([
                                 'message_status' =>'Send'
                             ]);
                             $send_data['message_status'] = 'Send';
                         }
-                        //* kalo dia pengirim
+                        //* kalo user pengirim login
                         else
                         {
-                            //? statusnya not send, karena penerima belum login
+                            //! statusnya not send, karena penerima belum login
                             $send_data['message_status'] = 'Not Send';
                         }
 
-                        $client->send(json_encode($send_data));
+                        $client->send(json_encode($send_data)); //! kirim data ke dashboard dan convert to object
                     }
                 }
             }
@@ -486,10 +489,13 @@ class SocketController extends Controller implements MessageComponentInterface
                 Chat::where('id', $data->chat_message_id)->update([
                     'message_status' => $data->chat_message_status
                 ]);
+
+                //* ambil connection_id user penerima chat
                 $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
 
                 foreach($this->clients as $client)
                 {
+                    //* kalo user yg login == pengirim chat
                     if($client->resourceId == $sender_connection_id[0]->connection_id)
                     {
                         $send_data['update_message_status'] = $data->chat_message_status;

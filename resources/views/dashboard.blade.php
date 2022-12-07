@@ -342,6 +342,7 @@
 				</div>
 				`;
 
+                    // chat_message_id didapat dari id di tabel chatnya
                     update_message_status(data.chat_message_id, from_user_id, to_user_id, 'Read');
                 } else {
                     var count_unread_message_element = document.getElementById('user_unread_message_' + data
@@ -376,6 +377,8 @@
             var html = '';
 
             for (var count = 0; count < data.chat_history.length; count++) {
+
+                // kalo yg login user pengirim chat
                 if (data.chat_history[count].from_user_id == from_user_id) {
                     var icon_style = '';
 
@@ -407,7 +410,9 @@
 				`;
 
 
-                } else {
+                }
+                // kalo yg login user penerima chat
+                else {
                     if (data.chat_history[count].message_status != 'Read') {
                         update_message_status(data.chat_history[count].id, data.chat_history[count].from_user_id,
                             data.chat_history[count].to_user_id, 'Read');
@@ -438,6 +443,7 @@
         if (data.update_message_status) {
             var chat_status_element = document.querySelector('#chat_status_' + data.chat_message_id + '');
 
+            // update icon chat status
             if (chat_status_element) {
                 if (data.update_message_status == 'Read') {
                     chat_status_element.innerHTML = '<i class="fas fa-check-double text-primary"></i>';
@@ -553,7 +559,7 @@
 		</label>
 		<button type="button" class="btn btn-success" id="send_button" onclick="send_chat_message()"><i class="fas fa-paper-plane"></i></button>
 	</div>
-	`;
+	`; // ketika tombol send diklik
 
         document.getElementById('chat_area').innerHTML = html;
         document.getElementById('chat_header').innerHTML = 'Chat with <b>' + to_user_name + '</b>';
@@ -603,6 +609,7 @@
         conn.send(JSON.stringify(data));
     }
 
+    // video 17
     function update_message_status(chat_message_id, from_user_id, to_user_id, chat_message_status) {
         var data = {
             chat_message_id: chat_message_id,
