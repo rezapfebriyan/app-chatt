@@ -240,8 +240,8 @@
             load_connected_chat_user(data.user_id); // akan menampilkan list user yg terkoneksi (abis di approve)
         }
 
-        // menampilkan list user yg approve chat_request
         if (data.response_connected_chat_user) {
+            // menampilkan list user yg approve chat_request
             var html = '<div class="list-group">';
 
             if (data.data.length > 0) {
@@ -453,6 +453,7 @@
                 }
             }
 
+            // menampilkan notif icon angka sesuai chat yg unread
             if (data.unread_msg) {
                 var count_unread_message_element = document.getElementById('user_unread_message_' + data
                     .from_user_id + '');
@@ -460,9 +461,12 @@
                 if (count_unread_message_element) {
                     var count_unread_message = count_unread_message_element.textContent;
 
+                    // kalo notifnya masih 0, iconnya muncul jumlah 1
                     if (count_unread_message == '') {
                         count_unread_message = parseInt(0) + 1;
-                    } else {
+                    }
+                    // kalo udah ada notif sebelumnya, maka tambahin 1s
+                    else {
                         count_unread_message = parseInt(count_unread_message) + 1;
                     }
 
@@ -622,6 +626,7 @@
         conn.send(JSON.stringify(data));
     }
 
+    // video 18
     function check_unread_message() {
         var unread_element = document.getElementsByClassName('user_unread_message');
 

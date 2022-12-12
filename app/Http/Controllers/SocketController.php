@@ -518,24 +518,32 @@ class SocketController extends Controller implements MessageComponentInterface
                 AND from_user_id = $data->to_user_id
                 */
 
-                $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get(); //send number of unread message
-                $receiver_connection_id = User::select('connection_id')->where('id', $data->to_user_id)->get(); //send message read status
+                //* ambil connection_id user pengirim chat
+                //? untuk ambil jumlah pesan yg belum dibaca
+                $sender_connection_id = User::select('connection_id')->where('id', $data->from_user_id)->get();
+
+                //* ambil connection_id user penerima chat
+                //? untuk set notif pesan di read
+                $receiver_connection_id = User::select('connection_id')->where('id', $data->to_user_id)->get();
 
                 foreach($chat_data as $row)
                 {
+                    //* ubah status chatnya == 'Send' (karna penerima chat udah login, tapi belum nge-read)
                     Chat::where('id', $row->id)->update([
                         'message_status' => 'Send'
                     ]);
 
                     foreach($this->clients as $client)
                     {
+                        //* kalo user yg login == pengirim chat
                         if($client->resourceId == $sender_connection_id[0]->connection_id)
                         {
-                            $send_data['count_unread_message'] = 1;
+                            $send_data['count_unread_message'] = 1; //! set jumlah pesan yg unread + 1
                             $send_data['chat_message_id'] = $row->id;
                             $send_data['from_user_id'] = $row->from_user_id;
                         }
 
+                        //* kalo user yg login == penerima chat
                         if($client->resourceId == $receiver_connection_id[0]->connection_id)
                         {
                             $send_data['update_message_status'] = 'Send';
@@ -598,4 +606,3 @@ class SocketController extends Controller implements MessageComponentInterface
         $conn->close();
     }
 }
-
