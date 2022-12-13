@@ -591,7 +591,7 @@ class SocketController extends Controller implements MessageComponentInterface
             $data['status'] = 'Offline';
             $updated_at = $user_id[0]->updated_at;
 
-            if(date('Y-m-d') == date('Y-m-d', strtotime($updated_at))) //Same Date, so display only Time
+            if(date('Y-m-d') == date('Y-m-d', strtotime($updated_at)))
             {
                 $data['last_seen'] = 'Last Seen at ' . date('H:i');
             }

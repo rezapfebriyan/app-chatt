@@ -103,6 +103,7 @@
         if (data.status) {
             var online_status_icon = document.getElementsByClassName('online_status_icon');
 
+            // data yg akan ditampilkan di user terkoneksi
             for (var count = 0; count < online_status_icon.length; count++) {
                 if (online_status_icon[count].id == 'status_' + data.id) {
                     if (data.status == 'Online') {
