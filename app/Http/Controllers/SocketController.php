@@ -21,6 +21,9 @@ class SocketController extends Controller implements MessageComponentInterface
     //* akan dipanggil ketika permintaan koneksi baru telah diterima / koneksi established
     public function onOpen(ConnectionInterface $conn)
     {
+        //TODO      ::        ConnectionInterface $conn       ::
+        //*  Objek proxy yang mewakili koneksi ke aplikasi, ini bertindak sebagai wadah untuk menyimpan data (dalam memori) tentang koneksi tersebut
+
         //! tambah koneksi data baru
         $this->clients->attach($conn); //* menambahkan objek $conn (store connection_id) ke $this->client
 
@@ -31,7 +34,7 @@ class SocketController extends Controller implements MessageComponentInterface
         if(isset($queryarray['token']))
         {
             User::where('token', $queryarray['token'])->update([
-                //! ubah column connection_id dengan $->resourceId
+                //! fill column connection_id dengan $->resourceId
                 'connection_id' => $conn->resourceId,
                 'user_status' => 'Online'
             ]);
@@ -40,10 +43,14 @@ class SocketController extends Controller implements MessageComponentInterface
             $data['id'] = $user_id[0]->id;
             $data['status'] = 'Online';
 
+            //* looping untuk kirim data ke user terkoneksi
             foreach($this->clients as $client)
             {
+                //* 
                 if($client->resourceId != $conn->resourceId)
                 {
+                    //! kirim status online ke user lain
+                    //? tidak dengan user login
                     $client->send(json_encode($data));
                 }
             }
@@ -576,6 +583,9 @@ class SocketController extends Controller implements MessageComponentInterface
                 'connection_id' => 0,
                 'user_status' => 'Offline'
             ]);
+
+            //* ambil data user auth ketika proses logout
+            //? untuk diubah updated_at nya dan statusnya jadi offline
             $user_id = User::select('id', 'updated_at')->where('token', $queryarray['token'])->get();
             $data['id'] = $user_id[0]->id;
             $data['status'] = 'Offline';
@@ -590,10 +600,13 @@ class SocketController extends Controller implements MessageComponentInterface
                 $data['last_seen'] = 'Last Seen at ' . date('d/m/Y H:i');
             }
 
+            //* looping untuk kirim data ke user terkoneksi
             foreach($this->clients as $client)
             {
                 if($client->resourceId != $conn->resourceId)
                 {
+                    //! kirim status offline ke user lain
+                    //? tidak dengan user login
                     $client->send(json_encode($data));
                 }
             }

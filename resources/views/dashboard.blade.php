@@ -256,11 +256,13 @@
                     var last_seen = '';
 
                     if (data.data[count].user_status == 'Online') {
+                        // menampilkan tanda online
                         html += '<span class="text-success online_status_icon" id="status_' + data.data[count].id +
                             '"><i class="fas fa-circle"></i></span>';
 
                         last_seen = 'Online';
                     } else {
+                        // tanda offline
                         html += '<span class="text-danger online_status_icon" id="status_' + data.data[count].id +
                             '"><i class="fas fa-circle"></i></span>';
 
